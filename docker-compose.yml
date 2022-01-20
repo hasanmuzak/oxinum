@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+  database:
+    container_name: oxinum_mysql
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: "${DB_NAME_APP}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - vol_oxinum_mysql:/var/lib/mysql
+    networks:
+      - back
+
+  app:
+    container_name: oxinum_app
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4444:4444"
+    volumes:
+      - ./backend/src:/oxinum-app/:cached
+    depends_on:
+      - database
+    networks:
+      - back
+
+networks:
+  back:
+
+volumes:
+  vol_oxinum_mysql:
